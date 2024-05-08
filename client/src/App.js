@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import CircularProgress from '@mui/material/CircularProgress';
 import withStyles from '@material-ui/core/styles';
 
 const styles = (theme) => ({
@@ -20,39 +21,38 @@ const styles = (theme) => ({
   table: {
     minWidth: 1080,
   },
+  progress: {
+    margin: theme.spacing.unit * 2
+  }
 });
-const issues = [
-  {
-    Title: '#1',
-    Description: '10h',
-    Reporter: '5h',
-    ReportedDate: '2h',
-    Comment: '0.0',
-    History: 'milestone1',
-  },
-
-  {
-    Title: '#2',
-    Description: '10h',
-    Reporter: '5h',
-    ReportedDate: '2h',
-    Comment: '0.0',
-    History: 'milestone1',
-  },
-
-  {
-    Title: '#3',
-    Description: '10h',
-    Reporter: '5h',
-    ReportedDate: '2h',
-    Comment: '0.0',
-    History: 'milestone1',
-  },
-];
 
 class App extends Component {
+
+  state = {
+    customers: "",
+    completed: 0
+  }
+
+  componentDidMount(){
+    this.timer = setInterval(this.progress, 20);
+    this.callApi()
+    .then(res => this.setState({issues: res}))
+    .catch(err => console.log(err));
+  }
+
+  callApi = async () => {
+    const response = await fetch('/api/Issues')
+    const body = await response.json();
+    return body;
+  }
+
+  progress = () => {
+    const {completed} = this.state;
+    this.setState({completed: completed >= 100 ? 0 : completed + 1});
+  }
+
   render() {
-    const { root, table } = this.props;
+    const { root, table, progress } = this.props;
     return (
       <Paper className={root}>
         <Table className={table}>
@@ -67,7 +67,7 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {issues.map((i) => {
+            {this.state.issues ? this.state.issues.map((i) => {
               return (
                 <Issue
                   Title={i.Title}
@@ -78,7 +78,13 @@ class App extends Component {
                   History={i.History}
                 />
               );
-            })}
+            }): 
+            <TableRow>
+              <TableCell colSpan="6" align="center">
+                <CircularProgress/>
+              </TableCell>
+            </TableRow>
+            }
           </TableBody>
         </Table>
       </Paper>
