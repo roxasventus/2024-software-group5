@@ -54,6 +54,18 @@ class App extends Component {
   render() {
     const { root, table, progress } = this.props;
     return (
+
+      <div className="App">
+        <div className="sidebar">
+            <div className="logo">Team5</div>
+            <div className = "login">Login</div>
+            <div className="menu">
+                <a href="/">Home</a>
+                <a href="#">Issue</a>
+                <a href="#">Analysis</a>
+            </div>
+        </div>
+
       <Paper className={root}>
         <Table className={table}>
           <TableHead>
@@ -88,6 +100,8 @@ class App extends Component {
           </TableBody>
         </Table>
       </Paper>
+
+      </div>
     );
   }
 }
